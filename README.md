@@ -17,79 +17,33 @@ $ npm install mocha-ci-slack-reporter
 
 ## Usage
 
-### Command-line
+All options:
 
-Run mocha with `mocha-junit-reporter`:
+* `url` (mandatory) - Slack incoming webhook URL
+* `username` (mandatory) - Username to post as
+* `channel` (mandatory) - Channel to post to
+* `logsUrl` - URL to logs page (appended to message text as a _View logs_ link)
+* `passEmoji` - Emoji to use for test pass (default is :ok_hand:)
+* `failEmoji` - Emoji to use for test failure (default is :bomb:)
+* `failuresOnly` - Whether to only report failures (default is `false`)
+
+### via Command-line
 
 ```shell
-$ mocha test --reporter mocha-ci-slack-reporter
+$ mocha test --reporter mocha-ci-slack-reporter  --reporter-options username=name,channel=#channel_name,...
 ```
-This will output a results file at `./test-results.xml`.
-You may optionally declare an alternate location for results XML file by setting
-the environment variable `MOCHA_FILE` or specifying `mochaFile` in `reporterOptions`:
 
-```shell
-$ MOCHA_FILE=./path_to_your/file.xml mocha test --reporter mocha-junit-reporter
-```
-or
-```shell
-$ mocha test --reporter mocha-junit-reporter --reporter-options mochaFile=./path_to_your/file.xml
-```
-or
+### via API
+
 ```javascript
 var mocha = new Mocha({
-    reporter: 'mocha-junit-reporter',
-    reporterOptions: {
-        mochaFile: './path_to_your/file.xml'
-    }
-});
-```
-
-### Append properties to testsuite
-
-You can also properties to the report under `testsuite`. This is useful if you want your CI environment to add extra build props to the report for analytics purposes
-
-```
-<testsuites>
-  <testsuite>
-    <properties>
-      <property name="BUILD_ID" value="4291"/>
-    </properties>
-    <testcase/>
-    <testcase/>
-    <testcase/>
-  </testsuite>
-</testsuites>
-```
-
-To do so pass them in via env variable:
-```shell
-PROPERTIES=BUILD_ID:4291 mocha test --reporter mocha-junit-reporter
-```
-or
-```javascript
-var mocha = new Mocha({
-    reporter: 'mocha-junit-reporter',
-    reporterOptions: {
-        properties: {
-            BUILD_ID: 4291
-        }
-    }
-})
-```
-
-### Results Report
-
-Results XML filename can contain `[hash]`, e.g. `./path_to_your/test-results.[hash].xml`. `[hash]` is replaced by MD5 hash of test results XML. This enables support of parallel execution of multiple `mocha-junit-reporter`'s writing test results in separate files.
-
-In order to display full suite title (including parents) just specify `useFullSuiteTitle` option
-```javascript
-var mocha = new Mocha({
-    reporter: 'mocha-junit-reporter',
-    reporterOptions: {
-        useFullSuiteTitle: true,
-        suiteTitleSeparedBy: '.' // suites separator, default is space (' ')
-    }
+  reporter: 'mocha-ci-slack-reporter',
+  reporterOptions: {
+    url: 'https://hooks.slack.com/...',
+    username: 'reporter',
+    channel: '#mychannel',
+    logsUrl: 'https://ci.com/project/...'
+  }
 });
 ```
 

@@ -41,7 +41,6 @@
   },
   "dependencies": {
     "debug": "^2.3.3",
-    "got": "^6.6.3",
-    "shelljs": "^0.7.5"
+    "sync-request": "^3.0.1"
   }
 }

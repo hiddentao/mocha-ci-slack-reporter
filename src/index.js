@@ -1,4 +1,4 @@
-import shell from 'shelljs'
+import request from 'sync-request'
 const debug = require('debug')('mocha-ci-slack-reporter')
 import { reporters } from 'mocha'
 const { Base } = reporters
@@ -104,14 +104,8 @@ class Reporter extends Base {
 
     debug('Reporting', message)
 
-    // TODO: investigate why using node's HTTP request module doesn't work at this point
-    shell.exec(`curl -s -d "payload=${escape(JSON.stringify(message))}" "${this.options.url}"`, {
-      silent: true,
-      async: true
-    }, (code, stdout, stderr) => {
-      if (0 !== code) {
-        console.error(stdout, stderr)
-      }
+    request('POST', this.options.url, {
+      json: message
     })
   }
 
