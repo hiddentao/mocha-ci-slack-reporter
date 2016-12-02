@@ -7,8 +7,9 @@
     "ecmaFeatures": {
       "experimentalObjectRestSpread": true,
     },
-  },  
+  },
   "rules": {
     "generator-star-spacing": ["error", {"before": true, "after": false}],
+    "yoda": "off"
   }
 }

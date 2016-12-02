@@ -1,4 +1,5 @@
-import Slack from 'node-slack'
+import shell from 'shelljs'
+const debug = require('debug')('mocha-ci-slack-reporter')
 import { reporters } from 'mocha'
 const { Base } = reporters
 
@@ -15,19 +16,26 @@ class Reporter extends Base {
     this.suites = []
 
     this.options = options.reporterOptions
-    this.slack = new Slack(this.options.url)
+
+    debug('Options', this.options)
   }
 
   suite (suite) {
+    debug('Start suite: ', suite.title)
+
     this.suites.push(suite.title)
   }
 
   // eslint-disable-next-line
   suite_end () {
+    debug('Suite end')
+
     this.suites.pop()
   }
 
   pass (test) {
+    debug('Test passed: ', test.title)
+
     this.passed.push({
       suite: this._buildSuiteName(),
       title: test.title,
@@ -36,6 +44,8 @@ class Reporter extends Base {
   }
 
   fail (test) {
+    debug('Test failed: ', test.title)
+
     this.failed.push({
       suite: this._buildSuiteName(),
       title: test.title,
@@ -45,10 +55,14 @@ class Reporter extends Base {
   }
 
   end () {
+    debug('Tests ended')
+
     const failed = !!this.failed.length
 
     // should we report passed tests
     if (!failed && this.options.failuresOnly) {
+      debug('No failures and failuresOnly is set, so not going to report')
+
       return
     }
 
@@ -58,29 +72,47 @@ class Reporter extends Base {
     }
 
     if (failed) {
-      message.text = `FAILED: ${this.options.testTitle} ${this.options.viewMore ? `(${this.options.viewMore})` : ''}`
+      debug('Reporting failure')
+
+      message.text = `FAILED: ${this.options.testTitle}`
       message.icon_emoji = this.options.failEmoji || ':boom:'
       message.attachments = []
 
       this.failed.forEach(f => {
         message.attachments.push({
           attachment_type: '',
-          text: `Failed: ${failed.title}`,
-          fallback: `Failed: ${failed.title}`,
+          text: `Failed: ${f.title}`,
+          fallback: `Failed: ${f.title}\n${f.error}`,
           fields: [
             {
-              title: '' + failed.error,
+              title: '' + f.error,
               short: false
             }
           ]
         })
       })
     } else {
-      message.text = `PASSED: ${this.options.testTitle} ${this.options.viewMore ? `(${this.options.viewMore})` : ''}`
+      debug('Reporting success')
+
+      message.text = `PASSED: ${this.options.testTitle}`
       message.icon_emoji = this.options.passEmoji || ':ok_hand:'
     }
 
-    this.slack.send(message)
+    if (this.options.logsUrl) {
+      message.text += ` (<${this.options.logsUrl}|View logs>)`
+    }
+
+    debug('Reporting', message)
+
+    // TODO: investigate why using node's HTTP request module doesn't work at this point
+    shell.exec(`curl -s -d "payload=${escape(JSON.stringify(message))}" "${this.options.url}"`, {
+      silent: true,
+      async: true
+    }, (code, stdout, stderr) => {
+      if (0 !== code) {
+        console.error(stdout, stderr)
+      }
+    })
   }
 
   _buildSuiteName () {
@@ -88,4 +120,4 @@ class Reporter extends Base {
   }
 }
 
-module.export = Reporter
+module.exports = Reporter
