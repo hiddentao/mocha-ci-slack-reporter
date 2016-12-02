@@ -1,0 +1,14 @@
+{
+  "extends": "standard",
+  "presets": ["es2015", "stage-3"],
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true,
+    },
+  },  
+  "rules": {
+    "generator-star-spacing": ["error", {"before": true, "after": false}],
+  }
+}
