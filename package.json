@@ -1,6 +1,6 @@
 {
   "name": "mocha-ci-slack-reporter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Slack reporter for Mocha when running in CI environments",
   "main": "lib/index.js",
   "scripts": {

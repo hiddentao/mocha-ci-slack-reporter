@@ -81,8 +81,8 @@ class Reporter extends Base {
       this.failed.forEach(f => {
         message.attachments.push({
           attachment_type: '',
-          text: `Failed: ${f.title}`,
-          fallback: `Failed: ${f.title}\n${f.error}`,
+          text: `Failed: ${f.suite} > ${f.title}`,
+          fallback: `Failed: ${f.suite} > ${f.title}\n${f.error}`,
           fields: [
             {
               title: '' + f.error,
