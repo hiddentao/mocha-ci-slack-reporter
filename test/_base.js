@@ -1,10 +1,9 @@
 require('co-mocha')
 
-import http from 'http'
-import Q from 'bluebird'
 import path from 'path'
 import Mocha from 'mocha'
 import Code from 'code'
+import mockery from 'mockery'
 
 const { Suite, Runner } = Mocha
 
@@ -20,17 +19,10 @@ export const create = (_module, options = {}) => {
 
       this.expect = Code.expect.bind(Code)
 
-      this.server = http.createServer((req, res) => {
-        // console.log('in request')
-        // this.requests.push(req.body)
-        res.writeHead(200, {
-          'Content-Type': 'text/plain'
-        })
-        res.end('ok!')
+      mockery.enable({ warnOnUnregistered: false })
+      mockery.registerMock('sync-request', (method, url, body) => {
+        this.requests.push({ method, url, body })
       })
-      Q.promisifyAll(this.server)
-
-      yield this.server.listenAsync(PORT)
 
       this.createMocha = (options) => {
         options = Object.assign({
@@ -62,9 +54,8 @@ export const create = (_module, options = {}) => {
     },
 
     afterEach: function *() {
-      if (this.server && this.server.closeAsync) {
-        yield this.server.closeAsync()
-      }
+      mockery.deregisterMock('sync-request')
+      mockery.disable()
     },
 
     tests: testMethods
