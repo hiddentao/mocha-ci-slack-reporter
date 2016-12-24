@@ -24,16 +24,16 @@ export const create = (_module, options = {}) => {
         this.requests.push({ method, url, body })
       })
 
-      this.createMocha = (options) => {
-        options = Object.assign({
+      this.createMocha = (reporterOptions) => {
+        options = {
           execute: false,
-          reporterOptions: {
+          reporterOptions: Object.assign({
             url: this.slackUrl,
+            testTitle: 'bigTest',
             username: 'test-reporter',
-            channel: '#test-channel',
-            logsUrl: 'https://hiddentao.com'
-          }
-        }, options)
+            channel: '#test-channel'
+          }, reporterOptions)
+        }
 
         const mocha = new Mocha({
           reporter: require('../')

@@ -24,7 +24,7 @@ test.twoPass = function *() {
           'json': {
             'username': 'test-reporter',
             'channel': '#test-channel',
-            'text': 'PASSED: undefined (<https://hiddentao.com|View logs>)',
+            'text': 'PASSED: bigTest',
             'icon_emoji': ':ok_hand:'
           }
         }
@@ -85,7 +85,7 @@ test.onePassTwoFail = function *() {
             ],
             'username': 'test-reporter',
             'channel': '#test-channel',
-            'text': 'FAILED: undefined (<https://hiddentao.com|View logs>)',
+            'text': 'FAILED: bigTest',
             'icon_emoji': ':boom:'
           }
         }
@@ -95,17 +95,15 @@ test.onePassTwoFail = function *() {
 }
 
 test.customOptions = {
-  beforeEach: function* () {
+  beforeEach: function *() {
     this.mocha = this.createMocha({
-      reporterOptions: {
-        testTitle: 'FLAG!!',
-        url: 'http://blabla.com',
-        username: 'reporter0',
-        channel: '#channel5',
-        logsUrl: 'https://logs.com',
-        failEmoji: ':mega1:',
-        passEmoji: ':mega2:'
-      }
+      testTitle: 'FLAG!!',
+      url: 'http://blabla.com',
+      username: 'reporter0',
+      channel: '#channel5',
+      logsUrl: 'https://logs.com',
+      failEmoji: ':mega1:',
+      passEmoji: ':mega2:'
     })
   },
 
@@ -179,4 +177,20 @@ test.customOptions = {
       ]
     )
   }
+}
+
+test.reportFailuresOnly = function *() {
+  const { runner, suite, Test } = this.createMocha({
+    failuresOnly: true
+  })
+
+  suite.addTest(new Test('yeee1', function (done) {
+    done()
+  }))
+
+  const failures = yield this.executeTests(runner)
+
+  this.expect(failures).to.equal(0)
+
+  this.expect(this.requests).to.equal([])
 }

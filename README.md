@@ -19,10 +19,11 @@ $ npm install mocha-ci-slack-reporter
 
 All options:
 
+* `testTitle` - (mandatory) Title of test in report
 * `url` (mandatory) - Slack incoming webhook URL
 * `username` (mandatory) - Username to post as
 * `channel` (mandatory) - Channel to post to
-* `logsUrl` - URL to logs page (appended to message text as a _View logs_ link)
+* `logsUrl` - URL to logs page, appended to message text (default is undefined)
 * `passEmoji` - Emoji to use for test pass (default is :ok_hand:)
 * `failEmoji` - Emoji to use for test failure (default is :bomb:)
 * `failuresOnly` - Whether to only report failures (default is `false`)
@@ -39,6 +40,7 @@ $ mocha test --reporter mocha-ci-slack-reporter  --reporter-options username=nam
 var mocha = new Mocha({
   reporter: 'mocha-ci-slack-reporter',
   reporterOptions: {
+    testTitle: 'My tests',
     url: 'https://hooks.slack.com/...',
     username: 'reporter',
     channel: '#mychannel',
