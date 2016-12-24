@@ -4,6 +4,7 @@
 [![NPM module](https://badge.fury.io/js/mocha-ci-slack-reporter.png)](https://badge.fury.io/js/mocha-ci-slack-reporter)
 [![Follow on Twitter](https://img.shields.io/twitter/url/http/shields.io.svg?style=social&label=Follow&maxAge=2592000)](https://twitter.com/hiddentao)
 
+
 Slack reporter for Mocha when running in CI environments.
 
 Although this can be used in non-CI environments too, it is suited for CI
