@@ -6,8 +6,12 @@ Although this can be used in non-CI environments too, it is suited for CI
 environment in that it is able to report build number, build URL, etc alongside
 standard test pass/failed information.
 
-It posts a single notification to your Slack channel with a summary of the test
-results.
+It posts a single pretty notification to your Slack channel with a summary of
+the test failures and/or successful run.
+
+What it looks like:
+
+![Slack screenshot](screenshot.png)
 
 ## Installation
 
